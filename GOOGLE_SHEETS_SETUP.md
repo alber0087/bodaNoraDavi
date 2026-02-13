@@ -30,11 +30,17 @@ Esta solución guarda todas las confirmaciones en una hoja de cálculo de Google
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Confirmaciones');
-    // Form POST sends application/x-www-form-urlencoded → use e.parameter (do NOT parse as JSON)
-    var p = e.parameter || {};
-    if (e.postData && e.postData.contents && (e.postData.contents + '').trim().indexOf('{') === 0) {
-      try { p = JSON.parse(e.postData.contents); } catch (err) {}
+    var p = {};
+    var raw = (e.postData && e.postData.contents) ? (e.postData.contents + '') : '';
+    if (raw.trim().indexOf('{') === 0) {
+      try { p = JSON.parse(raw); } catch (err) {}
+    } else if (raw.indexOf('=') !== -1) {
+      raw.split('&').forEach(function(pair) {
+        var i = pair.indexOf('=');
+        if (i !== -1) p[decodeURIComponent(pair.substring(0, i))] = decodeURIComponent((pair.substring(i + 1) || '').replace(/\+/g, ' '));
+      });
     }
+    if (Object.keys(p).length === 0 && e.parameter) p = e.parameter;
     var name = p.name || '';
     var attendance = p.attendance || '';
     var allergies = p.allergies || 'Ninguna';
