@@ -12,7 +12,7 @@
         ref="formRef"
         method="post"
         :action="GOOGLE_SCRIPT_URL"
-        target="confirmFrame"
+        :target="debugForm ? '_blank' : 'confirmFrame'"
         class="bg-gray-50 border border-gray-200 p-8 md:p-10 space-y-8"
         @submit.prevent="handleSubmit"
       >
@@ -190,8 +190,10 @@ const shoeSizes = ref([36, 37, 38, 39, 40, 41])
 
 const submitted = ref(false)
 const formRef = ref(null)
+// Set to true to open form response in a new tab (to see Google's response when debugging). Set back to false for production.
+const debugForm = true
 
-// Paste your Google Apps Script Web App URL here (see GOOGLE_SHEETS_SETUP.md). Form POSTs directly to it (no backend, no CORS).
+// MUST be the URL from YOUR deployment (Deploy > Manage deployments > copy URL). It ends with /exec
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzC54MFRgdkSdJdAs-1d4BWJnYvBqFcn4o_m803byrCvlYF9ckRVVKoPDshZeCKltNb/exec'
 
 function handleSubmit() {

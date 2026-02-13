@@ -29,10 +29,10 @@ Esta solución guarda todas las confirmaciones en una hoja de cálculo de Google
 ```javascript
 function doPost(e) {
   try {
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Confirmaciones');
-    // Data comes from the form POST (e.parameter), not JSON
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Confirmaciones');
+    // Form POST sends application/x-www-form-urlencoded → use e.parameter (do NOT parse as JSON)
     var p = e.parameter || {};
-    if (e.postData && e.postData.contents) {
+    if (e.postData && e.postData.contents && (e.postData.contents + '').trim().indexOf('{') === 0) {
       try { p = JSON.parse(e.postData.contents); } catch (err) {}
     }
     var name = p.name || '';
