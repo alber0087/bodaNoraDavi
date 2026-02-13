@@ -4,8 +4,26 @@
       <h2 class="text-4xl md:text-5xl font-serif font-normal text-center mb-16 text-gray-800 tracking-tight">
         Confirmación de Asistencia
       </h2>
-      
-      <form @submit.prevent="handleSubmit" class="bg-gray-50 border border-gray-200 p-8 md:p-10 space-y-8">
+
+      <!-- Hidden iframe: form posts here so the page doesn't navigate away -->
+      <iframe name="confirmFrame" title="Form submission" class="hidden" aria-hidden="true" />
+
+      <form
+        ref="formRef"
+        method="post"
+        :action="GOOGLE_SCRIPT_URL"
+        target="confirmFrame"
+        class="bg-gray-50 border border-gray-200 p-8 md:p-10 space-y-8"
+        @submit.prevent="handleSubmit"
+      >
+        <!-- Hidden fields sent to Google (form POST, no CORS) -->
+        <input type="hidden" name="name" :value="form.name" />
+        <input type="hidden" name="attendance" :value="form.attendance === 'yes' ? 'Sí' : (form.attendance === 'no' ? 'No' : '')" />
+        <input type="hidden" name="allergies" :value="form.allergies || 'Ninguna'" />
+        <input type="hidden" name="wants_slippers" :value="form.wantsSlippers === 'yes' ? 'Sí' : (form.wantsSlippers === 'no' ? 'No' : '')" />
+        <input type="hidden" name="shoe_size" :value="form.shoeSize || 'N/A'" />
+        <input type="hidden" name="goes_to_alboroto" :value="form.goesToAlboroto === 'yes' ? 'Sí' : (form.goesToAlboroto === 'no' ? 'No' : '')" />
+
         <!-- Name and Surname -->
         <div>
           <label for="name" class="block text-sm font-light text-gray-700 mb-3 tracking-wide uppercase">
@@ -151,22 +169,6 @@
         >
           <p class="font-light">¡Gracias! Tu confirmación ha sido enviada correctamente.</p>
         </div>
-
-        <!-- Error Message -->
-        <div
-          v-if="error"
-          class="bg-red-50 border border-red-200 text-red-800 px-4 py-3"
-        >
-          <p class="font-light">Hubo un error al enviar la confirmación. Por favor, inténtalo de nuevo.</p>
-        </div>
-
-        <!-- Loading State -->
-        <div
-          v-if="loading"
-          class="text-center text-gray-600 font-light"
-        >
-          <p>Enviando confirmación...</p>
-        </div>
       </form>
     </div>
   </section>
@@ -187,72 +189,19 @@ const form = ref({
 const shoeSizes = ref([36, 37, 38, 39, 40, 41])
 
 const submitted = ref(false)
-const loading = ref(false)
-const error = ref(false)
+const formRef = ref(null)
 
-// Google Sheets Configuration
-// This solution saves all responses to a Google Sheet instead of sending individual emails
-// See GOOGLE_SHEETS_SETUP.md for detailed setup instructions
-// 1. Create a Google Sheet with headers: Fecha y Hora | Nombre | Asistencia | Alergias | ¿Quiere Zapatillas? | Talla | ¿Va al Alboroto?
-// 2. Create an Apps Script web app (see instructions in GOOGLE_SHEETS_SETUP.md)
-// 3. Replace GOOGLE_SCRIPT_URL below with your Apps Script web app URL
-const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL' // Replace with your Google Apps Script web app URL
+// Paste your Google Apps Script Web App URL here (see GOOGLE_SHEETS_SETUP.md). Form POSTs directly to it (no backend, no CORS).
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzC54MFRgdkSdJdAs-1d4BWJnYvBqFcn4o_m803byrCvlYF9ckRVVKoPDshZeCKltNb/exec'
 
-const handleSubmit = async () => {
-  loading.value = true
-  error.value = false
-  submitted.value = false
-
-  try {
-    // Prepare data to send to Google Sheets
-    const formData = {
-      name: form.value.name,
-      attendance: form.value.attendance === 'yes' ? 'Sí' : 'No',
-      allergies: form.value.allergies || 'Ninguna',
-      wants_slippers: form.value.wantsSlippers === 'yes' ? 'Sí' : 'No',
-      shoe_size: form.value.shoeSize || 'N/A',
-      goes_to_alboroto: form.value.goesToAlboroto === 'yes' ? 'Sí' : 'No'
-    }
-
-    // Send data to Google Sheets via Apps Script
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData)
-    })
-
-    // Check if the response is ok
-    const result = await response.json()
-    if (!result.success) {
-      throw new Error(result.error || 'Failed to save data')
-    }
-
-    submitted.value = true
-    loading.value = false
-
-    // Reset form after 5 seconds
-    setTimeout(() => {
-      submitted.value = false
-      form.value = {
-        name: '',
-        attendance: '',
-        allergies: '',
-        wantsSlippers: '',
-        shoeSize: '',
-        goesToAlboroto: ''
-      }
-    }, 5000)
-  } catch (err) {
-    console.error('Error sending email:', err)
-    error.value = true
-    loading.value = false
-    
-    // Hide error after 5 seconds
-    setTimeout(() => {
-      error.value = false
-    }, 5000)
-  }
+function handleSubmit() {
+  if (!formRef.value) return
+  submitted.value = true
+  formRef.value.submit()
+  // Reset form and message after a moment
+  setTimeout(() => {
+    submitted.value = false
+    form.value = { name: '', attendance: '', allergies: '', wantsSlippers: '', shoeSize: '', goesToAlboroto: '' }
+  }, 4000)
 }
 </script>

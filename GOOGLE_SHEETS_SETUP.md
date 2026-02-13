@@ -24,48 +24,29 @@ Esta solución guarda todas las confirmaciones en una hoja de cálculo de Google
 
 1. En tu Google Sheet, ve a **Extensiones** > **Apps Script**
 2. Elimina el código que aparece por defecto
-3. Pega este código:
+3. Pega este código (acepta el envío del formulario de la web; si ya tenías una versión anterior, sustitúyela por esta):
 
 ```javascript
 function doPost(e) {
   try {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Confirmaciones');
-    
-    // Parse the data
-    const data = JSON.parse(e.postData.contents);
-    
-    // Get current date and time
-    const timestamp = new Date();
-    
-    // Add row to sheet
-    sheet.appendRow([
-      timestamp,
-      data.name || '',
-      data.attendance || '',
-      data.allergies || 'Ninguna',
-      data.wants_slippers || '',
-      data.shoe_size || 'N/A',
-      data.goes_to_alboroto || ''
-    ]);
-    
-    // Return success response with CORS headers
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: true }))
-      .setMimeType(ContentService.MimeType.JSON);
-      
+    // Data comes from the form POST (e.parameter), not JSON
+    var p = e.parameter || {};
+    if (e.postData && e.postData.contents) {
+      try { p = JSON.parse(e.postData.contents); } catch (err) {}
+    }
+    var name = p.name || '';
+    var attendance = p.attendance || '';
+    var allergies = p.allergies || 'Ninguna';
+    var wants_slippers = p.wants_slippers || '';
+    var shoe_size = p.shoe_size || 'N/A';
+    var goes_to_alboroto = p.goes_to_alboroto || '';
+    var timestamp = new Date();
+    sheet.appendRow([timestamp, name, attendance, allergies, wants_slippers, shoe_size, goes_to_alboroto]);
+    return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
-    // Return error response with CORS headers
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: false, error: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: error.toString() })).setMimeType(ContentService.MimeType.JSON);
   }
-}
-
-// Handle CORS preflight requests
-function doOptions() {
-  return ContentService
-    .createTextOutput('')
-    .setMimeType(ContentService.MimeType.JSON);
 }
 ```
 
@@ -86,11 +67,13 @@ function doOptions() {
 6. Haz clic en **Autorizar acceso** y acepta los permisos
 7. Si es la primera vez, Google te pedirá autorizar el acceso. Acepta todos los permisos.
 
-### 4. Actualizar el código
+### 4. Poner la URL en la web
 
 1. Abre `src/components/EncuestaSection.vue`
-2. Busca: `const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL'`
-3. Reemplaza `YOUR_GOOGLE_SCRIPT_URL` con la URL que copiaste en el paso 3
+2. Busca la línea: `const GOOGLE_SCRIPT_URL = 'https://script...'`
+3. Sustituye esa URL por la que copiaste en el paso 3 (la que termina en `/exec`).
+
+No hace falta backend ni variables de entorno: el formulario envía los datos directamente a Google (el navegador hace un POST normal, sin CORS).
 
 ### 5. (Opcional) Configurar notificaciones por email
 
