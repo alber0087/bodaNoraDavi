@@ -23,35 +23,38 @@ Esta solución guarda todas las confirmaciones en una hoja de cálculo de Google
 ### 2. Crear un Script de Apps Script
 
 1. En tu Google Sheet, ve a **Extensiones** > **Apps Script**
-2. Elimina el código que aparece por defecto
-3. Pega este código (acepta el envío del formulario de la web; si ya tenías una versión anterior, sustitúyela por esta):
+2. **Borra todo** el código del archivo (y cualquier otro archivo .gs que tenga `doPost` o `JSON.parse(e.postData`).
+3. Pega **solo** este código (no uses JSON.parse con el body del formulario):
 
 ```javascript
+// Form sends: name=Albert&attendance=Sí&... (form-urlencoded). Do NOT use JSON.parse on the body.
 function doPost(e) {
   try {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Confirmaciones');
     var p = {};
-    var raw = (e.postData && e.postData.contents) ? (e.postData.contents + '') : '';
-    if (raw.trim().indexOf('{') === 0) {
-      try { p = JSON.parse(raw); } catch (err) {}
-    } else if (raw.indexOf('=') !== -1) {
+    var raw = (e.postData && e.postData.contents) ? String(e.postData.contents) : '';
+    if (raw.indexOf('=') !== -1) {
       raw.split('&').forEach(function(pair) {
         var i = pair.indexOf('=');
-        if (i !== -1) p[decodeURIComponent(pair.substring(0, i))] = decodeURIComponent((pair.substring(i + 1) || '').replace(/\+/g, ' '));
+        if (i !== -1) {
+          p[decodeURIComponent(pair.substring(0, i))] = decodeURIComponent((pair.substring(i + 1) || '').replace(/\+/g, ' '));
+        }
       });
+    } else if (e.parameter) {
+      p = e.parameter;
     }
-    if (Object.keys(p).length === 0 && e.parameter) p = e.parameter;
-    var name = p.name || '';
-    var attendance = p.attendance || '';
-    var allergies = p.allergies || 'Ninguna';
-    var wants_slippers = p.wants_slippers || '';
-    var shoe_size = p.shoe_size || 'N/A';
-    var goes_to_alboroto = p.goes_to_alboroto || '';
-    var timestamp = new Date();
-    sheet.appendRow([timestamp, name, attendance, allergies, wants_slippers, shoe_size, goes_to_alboroto]);
+    sheet.appendRow([
+      new Date(),
+      p.name || '',
+      p.attendance || '',
+      p.allergies || 'Ninguna',
+      p.wants_slippers || '',
+      p.shoe_size || 'N/A',
+      p.goes_to_alboroto || ''
+    ]);
     return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({ success: false, error: error.toString() })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.toString() })).setMimeType(ContentService.MimeType.JSON);
   }
 }
 ```
