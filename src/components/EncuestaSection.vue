@@ -5,24 +5,22 @@
         Confirmación de Asistencia
       </h2>
 
-      <!-- Hidden iframe: form posts here so the page doesn't navigate away -->
-      <iframe name="confirmFrame" title="Form submission" class="hidden" aria-hidden="true" />
-
       <form
         ref="formRef"
         method="post"
-        :action="GOOGLE_SCRIPT_URL"
-        :target="debugForm ? '_blank' : 'confirmFrame'"
+        :action="GOOGLE_FORM_URL"
+        :target="debugForm ? '_blank' : undefined"
         class="bg-gray-50 border border-gray-200 p-8 md:p-10 space-y-8"
         @submit.prevent="handleSubmit"
       >
-        <!-- Hidden fields sent to Google (form POST, no CORS) -->
-        <input type="hidden" name="name" :value="form.name" />
-        <input type="hidden" name="attendance" :value="form.attendance === 'yes' ? 'Sí' : (form.attendance === 'no' ? 'No' : '')" />
-        <input type="hidden" name="allergies" :value="form.allergies || 'Ninguna'" />
-        <input type="hidden" name="wants_slippers" :value="form.wantsSlippers === 'yes' ? 'Sí' : (form.wantsSlippers === 'no' ? 'No' : '')" />
-        <input type="hidden" name="shoe_size" :value="form.shoeSize || 'N/A'" />
-        <input type="hidden" name="goes_to_alboroto" :value="form.goesToAlboroto === 'yes' ? 'Sí' : (form.goesToAlboroto === 'no' ? 'No' : '')" />
+        <!-- Hidden fields sent to Google Form (entry.XXXXXXX format) -->
+        <input type="hidden" :name="GOOGLE_FORM_FIELDS.name" :value="form.name" />
+        <input type="hidden" :name="GOOGLE_FORM_FIELDS.attendance" :value="form.attendance === 'yes' ? 'Sí' : (form.attendance === 'no' ? 'No' : '')" />
+        <input type="hidden" :name="GOOGLE_FORM_FIELDS.allergies" :value="form.allergies || 'Ninguna'" />
+        <input type="hidden" :name="GOOGLE_FORM_FIELDS.wants_slippers" :value="form.wantsSlippers === 'yes' ? 'Sí' : (form.wantsSlippers === 'no' ? 'No' : '')" />
+        <!-- Send shoe_size: if wants slippers, send selected size; if not, send "No aplica" (in case field is required in Google Forms) -->
+        <input type="hidden" :name="GOOGLE_FORM_FIELDS.shoe_size" :value="form.wantsSlippers === 'yes' && form.shoeSize ? form.shoeSize : 'No aplica'" />
+        <input type="hidden" :name="GOOGLE_FORM_FIELDS.goes_to_alboroto" :value="form.goesToAlboroto === 'yes' ? 'Sí' : (form.goesToAlboroto === 'no' ? 'No' : '')" />
 
         <!-- Name and Surname -->
         <div>
@@ -191,15 +189,58 @@ const shoeSizes = ref([36, 37, 38, 39, 40, 41])
 const submitted = ref(false)
 const formRef = ref(null)
 // Set to true to open form response in a new tab (to see Google's response when debugging). Set back to false for production.
-const debugForm = true
+const debugForm = false
 
-// MUST be the URL from YOUR deployment (Deploy > Manage deployments > copy URL). It ends with /exec
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzC54MFRgdkSdJdAs-1d4BWJnYvBqFcn4o_m803byrCvlYF9ckRVVKoPDshZeCKltNb/exec'
+// Google Form URL (ends with /formResponse, not /viewform)
+const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSe3MYN-8YtPGiiHVqF4TmSOd6mJWwxLmTXoExK7G6lxyFpXPw/formResponse'
 
-function handleSubmit() {
+// Field names from your Google Form (entry.XXXXXXX format)
+// Estos valores vienen de las URLs de prellenado que obtuviste
+const GOOGLE_FORM_FIELDS = {
+  name: 'entry.976262934',           // Campo 1: Nombre y Apellidos
+  attendance: 'entry.1161261606',      // Campo 2: Asistencia
+  allergies: 'entry.820820323',       // Campo 3: Alergias
+  wants_slippers: 'entry.312107365',  // Campo 4: ¿Quiere zapatillas?
+  shoe_size: 'entry.1690728712',      // Campo 5: Talla de zapatilla
+  goes_to_alboroto: 'entry.933654178' // Campo 6: ¿Va al Alboroto?
+}
+
+async function handleSubmit() {
   if (!formRef.value) return
+  
+  // Show success message immediately
   submitted.value = true
-  formRef.value.submit()
+  
+  // Build form data to send directly to Google Forms (avoids draft modal issue)
+  const formData = new URLSearchParams()
+  formData.append(GOOGLE_FORM_FIELDS.name, form.value.name)
+  formData.append(GOOGLE_FORM_FIELDS.attendance, form.value.attendance === 'yes' ? 'Sí' : (form.value.attendance === 'no' ? 'No' : ''))
+  formData.append(GOOGLE_FORM_FIELDS.allergies, form.value.allergies || 'Ninguna')
+  formData.append(GOOGLE_FORM_FIELDS.wants_slippers, form.value.wantsSlippers === 'yes' ? 'Sí' : (form.value.wantsSlippers === 'no' ? 'No' : ''))
+  if (form.value.wantsSlippers === 'yes' && form.value.shoeSize) {
+    formData.append(GOOGLE_FORM_FIELDS.shoe_size, form.value.shoeSize)
+  } else {
+    formData.append(GOOGLE_FORM_FIELDS.shoe_size, 'No aplica')
+  }
+  formData.append(GOOGLE_FORM_FIELDS.goes_to_alboroto, form.value.goesToAlboroto === 'yes' ? 'Sí' : (form.value.goesToAlboroto === 'no' ? 'No' : ''))
+  
+  // Submit directly via fetch (no-cors mode to avoid CORS issues)
+  // This bypasses the Google Forms page and draft modal
+  try {
+    await fetch(GOOGLE_FORM_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData.toString()
+    })
+    // Success - data sent (we can't read response in no-cors mode, but that's OK)
+  } catch (err) {
+    // Even if there's an error, the data might have been sent
+    console.log('Form submitted (response not readable in no-cors mode)')
+  }
+  
   // Reset form and message after a moment
   setTimeout(() => {
     submitted.value = false
