@@ -9,7 +9,7 @@
         ref="formRef"
         method="post"
         :action="GOOGLE_FORM_URL"
-        :target="debugForm ? '_blank' : undefined"
+        target="_blank"
         class="bg-gray-50 border border-gray-200 p-8 md:p-10 space-y-8"
         @submit.prevent="handleSubmit"
       >
@@ -18,8 +18,8 @@
         <input type="hidden" :name="GOOGLE_FORM_FIELDS.attendance" :value="form.attendance === 'yes' ? 'Sí' : (form.attendance === 'no' ? 'No' : '')" />
         <input type="hidden" :name="GOOGLE_FORM_FIELDS.allergies" :value="form.allergies || 'Ninguna'" />
         <input type="hidden" :name="GOOGLE_FORM_FIELDS.wants_slippers" :value="form.wantsSlippers === 'yes' ? 'Sí' : (form.wantsSlippers === 'no' ? 'No' : '')" />
-        <!-- Send shoe_size: if wants slippers, send selected size; if not, send "No aplica" (in case field is required in Google Forms) -->
-        <input type="hidden" :name="GOOGLE_FORM_FIELDS.shoe_size" :value="form.wantsSlippers === 'yes' && form.shoeSize ? form.shoeSize : 'No aplica'" />
+        <!-- Only send shoe_size if user wants slippers and has selected a size -->
+        <input v-if="form.wantsSlippers === 'yes' && form.shoeSize" type="hidden" :name="GOOGLE_FORM_FIELDS.shoe_size" :value="form.shoeSize" />
         <input type="hidden" :name="GOOGLE_FORM_FIELDS.goes_to_alboroto" :value="form.goesToAlboroto === 'yes' ? 'Sí' : (form.goesToAlboroto === 'no' ? 'No' : '')" />
 
         <!-- Name and Surname -->
@@ -205,43 +205,17 @@ const GOOGLE_FORM_FIELDS = {
   goes_to_alboroto: 'entry.933654178' // Campo 6: ¿Va al Alboroto?
 }
 
-async function handleSubmit() {
+function handleSubmit() {
   if (!formRef.value) return
   
   // Show success message immediately
   submitted.value = true
   
-  // Build form data to send directly to Google Forms (avoids draft modal issue)
-  const formData = new URLSearchParams()
-  formData.append(GOOGLE_FORM_FIELDS.name, form.value.name)
-  formData.append(GOOGLE_FORM_FIELDS.attendance, form.value.attendance === 'yes' ? 'Sí' : (form.value.attendance === 'no' ? 'No' : ''))
-  formData.append(GOOGLE_FORM_FIELDS.allergies, form.value.allergies || 'Ninguna')
-  formData.append(GOOGLE_FORM_FIELDS.wants_slippers, form.value.wantsSlippers === 'yes' ? 'Sí' : (form.value.wantsSlippers === 'no' ? 'No' : ''))
-  if (form.value.wantsSlippers === 'yes' && form.value.shoeSize) {
-    formData.append(GOOGLE_FORM_FIELDS.shoe_size, form.value.shoeSize)
-  } else {
-    formData.append(GOOGLE_FORM_FIELDS.shoe_size, 'No aplica')
-  }
-  formData.append(GOOGLE_FORM_FIELDS.goes_to_alboroto, form.value.goesToAlboroto === 'yes' ? 'Sí' : (form.value.goesToAlboroto === 'no' ? 'No' : ''))
+  // Submit form using native HTML form submission (Google Forms expects this)
+  // This will navigate to Google's thank you page, but we show success message first
+  formRef.value.submit()
   
-  // Submit directly via fetch (no-cors mode to avoid CORS issues)
-  // This bypasses the Google Forms page and draft modal
-  try {
-    await fetch(GOOGLE_FORM_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formData.toString()
-    })
-    // Success - data sent (we can't read response in no-cors mode, but that's OK)
-  } catch (err) {
-    // Even if there's an error, the data might have been sent
-    console.log('Form submitted (response not readable in no-cors mode)')
-  }
-  
-  // Reset form and message after a moment
+  // Reset form and message after a moment (if no navigation happened)
   setTimeout(() => {
     submitted.value = false
     form.value = { name: '', attendance: '', allergies: '', wantsSlippers: '', shoeSize: '', goesToAlboroto: '' }
