@@ -77,56 +77,16 @@
 import { ref } from 'vue'
 
 const schedule = ref([
-  {
-    time: '12:00',
-    title: 'Llegada de invitados',
-    image: null
-  },
-  {
-    time: '12:45',
-    title: 'Ceremonia del casorio',
-    image: null
-  },
-  {
-    time: '13:45',
-    title: '¡Coctelazo!',
-    image: null
-  },
-  {
-    time: '15:30-16:00',
-    title: 'Plato principal',
-    image: null
-  },
-  {
-    time: '17:00',
-    title: 'Café y licores',
-    image: null
-  },
-  {
-    time: '17:30',
-    title: '¡Abre la barra libre!',
-    image: null
-  },
-  {
-    time: '18:30',
-    title: 'Concursos y discursos',
-    image: null
-  },
-  {
-    time: '20:00',
-    title: 'Concierto de Fijo Discontinuo',
-    image: null
-  },
-  {
-    time: '21:30',
-    title: 'Sorpresasssss y DJs',
-    image: null
-  },
-  {
-    time: '00:00',
-    title: 'Discoteca Alboroto',
-    image: null
-  }
+  { time: '12:00', title: 'Recepción de invitadas e invitados' },
+  { time: '12:45', title: 'Ceremonia del casorio de Nora & David' },
+  { time: '13:45', title: 'Cóctel largo con bebidas y delicatessen' },
+  { time: '15:30-16:00', title: 'Nos sentamos para el plato principal' },
+  { time: '17:00', title: 'Cafés y licores' },
+  { time: '17:30', title: '¡Abre la barra libre y empieza la fiesta!' },
+  { time: '18:30', title: 'Concursos, discursos y sorpresas' },
+  { time: '20:00', title: 'Conciertazo de Fijo Discontinuo' },
+  { time: '21:30', title: 'Sigue la música con los mejores DJs' },
+  { time: '00:00', title: 'Y para los más fiesteros, ¡Seguimos en la discoteca Alboroto!' }
 ])
 
 // Bodega de Parrado location

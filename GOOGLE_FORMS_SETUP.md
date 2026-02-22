@@ -111,6 +111,30 @@ const GOOGLE_FORM_FIELDS = {
 - ✅ No hay problemas de CORS ni JSON parsing
 - ✅ Fácil de compartir y ver respuestas
 
-## Ver las respuestas:
+## Vincular la hoja de cálculo a otra cuenta
 
-Abre la hoja de cálculo conectada al formulario (pestaña Respuestas → icono de Sheets) y verás todas las confirmaciones.
+Para que otra persona (otra cuenta de Google) pueda ver o editar las respuestas:
+
+### Compartir la hoja de cálculo (Google Sheets)
+
+1. Abre la **hoja de cálculo** donde se guardan las respuestas (desde el formulario: pestaña **Respuestas** → icono de **Google Sheets**).
+2. Haz clic en **Compartir** (arriba a la derecha).
+3. Añade el **correo** de la otra cuenta.
+4. Elige el nivel de acceso:
+   - **Lector**: solo puede ver las respuestas.
+   - **Comentar**: puede ver y añadir comentarios.
+   - **Editor**: puede ver y modificar la hoja (añadir columnas, borrar filas, etc.).
+5. Opcional: desmarca **"Notificar a las personas"** si no quieres enviar un email.
+6. Haz clic en **Enviar** (o **Compartir**).
+
+La otra cuenta verá la hoja en su Google Drive (en "Compartidos conmigo") y las respuestas nuevas seguirán apareciendo ahí.
+
+### Compartir también el formulario (opcional)
+
+Si quieres que la otra cuenta pueda editar el formulario o ver la configuración:
+
+1. Abre el **Google Form**.
+2. Haz clic en **Compartir** (arriba a la derecha).
+3. Añade el correo y elige **Editor** o **Lector** según lo que necesites.
+
+**Nota:** El formulario debe seguir perteneciendo a la cuenta que lo creó para que la web siga enviando a la misma URL. Solo compartes la hoja (y opcionalmente el formulario) para que la otra persona pueda ver o gestionar los datos.
