@@ -19,7 +19,6 @@
             </div>
             <div class="flex-grow border-l border-gray-200 pl-6 md:pl-8">
               <h3 class="text-xl md:text-2xl font-serif font-normal text-gray-800 mb-3">{{ event.title }}</h3>
-              <p class="text-gray-600 leading-relaxed font-light">{{ event.description }}</p>
             </div>
           </div>
         </div>
@@ -34,56 +33,43 @@ import { ref } from 'vue'
 const schedule = ref([
   {
     time: '12:00',
-    title: 'Llegada de invitados',
-    description: 'Bienvenida y recepción de invitados en la Bodega de Parrado.',
-    image: null
+    title: 'Recepción de invitadas e invitados'
   },
   {
     time: '12:45',
-    title: 'Ceremonia del casorio',
-    description: 'Ceremonia de boda. Será un momento íntimo y especial donde celebraremos nuestro compromiso.',
-    image: null
+    title: 'Ceremonia del casorio de Nora & David'
   },
   {
     time: '13:45',
-    title: '¡Coctelazo!',
-    description: 'Empieza el show: ¡Coctelazo! Disfrutaremos de aperitivos y bebidas en un ambiente festivo.',
-    image: null
+    title: 'Cóctel largo con bebidas y delicatessen'
   },
   {
     time: '15:30-16:00',
-    title: 'Plato principal',
-    description: 'Cena de celebración con menú especial. Disfrutaremos de una deliciosa comida en compañía de nuestros seres queridos.',
+    title: 'Nos sentamos para el plato principal'
   },
   {
     time: '17:00',
-    title: 'Café y licores',
-    description: 'Momento para disfrutar de un café y licores después de la comida.',
+    title: 'Cafés y licores'
   },
   {
     time: '17:30',
-    title: '¡Abre la barra libre!',
-    description: 'La barra libre está abierta. ¡A disfrutar!',
+    title: '¡Abre la barra libre y empieza la fiesta!'
   },
   {
     time: '18:30',
-    title: 'Concursos y discursos',
-    description: 'Momento para los concursos y discursos. ¡Preparaos para divertiros!',
+    title: 'Concursos, discursos y sorpresas'
   },
   {
     time: '20:00',
-    title: 'Concierto de Fijo Discontinuo',
-    description: 'Concierto en directo de Fijo Discontinuo. ¡No os lo perdáis!',
+    title: 'Conciertazo de Fijo Discontinuo'
   },
   {
     time: '21:30',
-    title: 'Sorpresasssss y DJs',
-    description: 'Llegan las sorpresas y los DJs. ¡A bailar hasta que el cuerpo aguante!',
+    title: 'Sigue la música con los mejores DJs'
   },
   {
     time: '00:00',
-    title: 'Discoteca Alboroto',
-    description: 'Hay que estar fuera de la finca. El que quiera seguir la fiesta... ¡nos vemos en la discoteca Alboroto!'
+    title: 'Y para los más fiesteros, ¡Seguimos en la discoteca Alboroto!'
   }
 ])
 </script>
