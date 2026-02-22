@@ -1,5 +1,5 @@
 <template>
-  <section id="cuenta-atras" class="py-24 px-4 bg-white border-t border-gray-100">
+  <section id="cuenta-atras" class="py-24 px-4 bg-gold-100 border-t border-gold-200/30">
     <div class="container mx-auto max-w-5xl">
       <h2 class="text-4xl md:text-5xl font-serif font-normal text-center mb-4 text-gray-800 tracking-tight">
         Nos vemos en...

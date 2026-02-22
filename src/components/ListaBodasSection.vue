@@ -1,5 +1,5 @@
 <template>
-  <section id="lista-bodas" class="py-24 px-4 bg-gradient-to-b from-white to-gray-50 border-t border-gray-100">
+  <section id="lista-bodas" class="py-24 px-4 bg-white border-t border-gray-100">
     <div class="container mx-auto max-w-3xl">
       <h2 class="text-4xl md:text-5xl font-serif font-normal text-center mb-4 text-gray-800 tracking-tight">
         Lista de bodas

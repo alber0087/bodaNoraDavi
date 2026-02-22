@@ -4,6 +4,11 @@
       <h2 class="text-4xl md:text-5xl font-serif font-normal text-center mb-4 text-gray-800 tracking-tight">
         Nuestra Historia
       </h2>
+      <div class="w-24 h-px bg-gold-400 mx-auto mb-6"></div>
+
+      <p class="text-center text-gray-600 font-light text-lg md:text-2xl max-w-2xl mx-auto mb-6 leading-relaxed">
+        Gracias por formar parte de esta historia de amor que comenzó en las entrañas de un periódico, siguió con muchos Timbeques, se consolidó en el tiempo y se comprometió en París con un <em>¡claro que sí!</em>
+      </p>
       <div class="w-24 h-px bg-gold-400 mx-auto mb-16"></div>
       
       <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
