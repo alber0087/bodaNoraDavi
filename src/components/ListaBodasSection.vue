@@ -1,23 +1,24 @@
 <template>
-  <section id="lista-bodas" class="py-24 px-4 bg-gray-50 border-t border-gray-100">
+  <section id="lista-bodas" class="py-24 px-4 bg-gradient-to-b from-white to-gray-50 border-t border-gray-100">
     <div class="container mx-auto max-w-3xl">
-      <h2 class="text-4xl md:text-5xl font-serif font-normal text-center mb-16 text-gray-800 tracking-tight">
+      <h2 class="text-4xl md:text-5xl font-serif font-normal text-center mb-4 text-gray-800 tracking-tight">
         Lista de bodas
       </h2>
+      <div class="w-24 h-px bg-gold-400 mx-auto mb-16"></div>
       
-      <div class="bg-white border border-gray-200 p-8 md:p-12 text-center">
+      <div class="bg-white border border-gray-200 shadow-sm p-8 md:p-12 text-center">
         <p class="text-gray-700 mb-8 text-lg font-light leading-relaxed">
           Si deseas hacernos un regalo, puedes hacer una transferencia a nuestra cuenta bancaria:
         </p>
         
-        <div class="bg-gray-50 border border-gray-200 p-6 md:p-8 mb-6">
+        <div class="bg-gradient-to-br from-gray-50 to-white border border-gray-200 p-6 md:p-8 mb-6 shadow-sm">
           <p class="text-sm font-light text-gray-500 mb-2 uppercase tracking-wider">Número de cuenta</p>
           <p class="text-2xl md:text-3xl font-serif font-normal text-gray-800 mb-2 break-all">
             {{ accountNumber }}
           </p>
           <button
             @click="copyToClipboard"
-            class="mt-4 text-gray-600 hover:text-gold-700 text-sm font-light underline transition-colors duration-300"
+            class="mt-4 text-gray-600 hover:text-gold-600 text-sm font-light underline transition-colors duration-300"
           >
             Copiar número de cuenta
           </button>

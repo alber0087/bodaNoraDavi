@@ -1,16 +1,17 @@
 <template>
   <section id="encuesta" class="py-24 px-4 bg-white border-t border-gray-100">
     <div class="container mx-auto max-w-2xl">
-      <h2 class="text-4xl md:text-5xl font-serif font-normal text-center mb-16 text-gray-800 tracking-tight">
+      <h2 class="text-4xl md:text-5xl font-serif font-normal text-center mb-4 text-gray-800 tracking-tight">
         Confirmación de Asistencia
       </h2>
+      <div class="w-24 h-px bg-gold-400 mx-auto mb-16"></div>
 
       <form
         ref="formRef"
         method="post"
         :action="GOOGLE_FORM_URL"
         target="_blank"
-        class="bg-gray-50 border border-gray-200 p-8 md:p-10 space-y-8"
+        class="bg-white border border-gray-200 shadow-sm p-8 md:p-10 space-y-8"
         @submit.prevent="handleSubmit"
       >
         <!-- Hidden fields sent to Google Form (entry.XXXXXXX format) -->
@@ -154,7 +155,7 @@
         <div class="pt-4">
           <button
             type="submit"
-            class="w-full bg-gray-800 hover:bg-gray-900 text-white font-light tracking-widest uppercase py-4 px-6 transition-colors duration-300 border border-gray-800 hover:border-gray-900"
+            class="w-full bg-gray-800 hover:bg-gold-600 text-white font-light tracking-widest uppercase py-4 px-6 transition-all duration-300 border border-gray-800 hover:border-gold-600 shadow-md hover:shadow-lg"
           >
             Enviar Confirmación
           </button>

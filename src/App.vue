@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-white">
     <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+    <header class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
       <nav class="container mx-auto px-6 py-2">
         <div class="flex items-center justify-between">
           <!-- Logo placeholder -->
@@ -53,7 +53,7 @@
               <a
                 :href="section.id === 'inicio' ? '#' : `#${section.id}`"
                 @click.prevent="scrollToSection(section.id)"
-                class="text-gray-700 hover:text-gold-700 font-light text-sm tracking-wider uppercase transition-colors duration-300 border-b-2 border-transparent hover:border-gold-700 pb-1"
+                class="text-gray-700 hover:text-gold-600 font-light text-sm tracking-wider uppercase transition-all duration-300 border-b-2 border-transparent hover:border-gold-500 pb-1"
               >
                 {{ section.name }}
               </a>
@@ -78,7 +78,7 @@
               <a
                 :href="section.id === 'inicio' ? '#' : `#${section.id}`"
                 @click.prevent="handleMenuClick(section.id)"
-                class="block text-gray-700 hover:text-gold-700 font-light text-sm tracking-wider uppercase transition-colors duration-300 border-b-2 border-transparent hover:border-gold-700 pb-2"
+                class="block text-gray-700 hover:text-gold-600 font-light text-sm tracking-wider uppercase transition-all duration-300 border-b-2 border-transparent hover:border-gold-500 pb-2"
               >
                 {{ section.name }}
               </a>
@@ -89,16 +89,30 @@
     </header>
 
     <!-- Hero Section -->
-    <section id="inicio" class="text-center py-24 md:py-32 px-4 bg-white">
-      <div class="container mx-auto max-w-4xl">
-        <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif font-normal mb-6 text-gray-800 tracking-tight">
+    <section id="inicio" class="relative text-center py-32 md:py-48 px-4 bg-gray-900 overflow-hidden">
+      <!-- Background Image with Overlay -->
+      <div class="absolute inset-0 z-0">
+        <img 
+          src="/1.jpeg" 
+          alt="Nora y David" 
+          class="w-full h-full object-cover opacity-40"
+        />
+        <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40"></div>
+      </div>
+      
+      <!-- Content -->
+      <div class="relative z-10 container mx-auto max-w-4xl">
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif font-normal mb-6 text-white tracking-tight drop-shadow-lg">
           Nora & David
         </h1>
-        <div class="w-24 h-px bg-gold-600 mx-auto mb-6"></div>
-        <p class="text-lg md:text-xl text-gray-600 font-light tracking-widest uppercase">2 de Mayo, 2026</p>
-        <p class="text-base md:text-lg text-gray-500 font-light mt-4">Nos casamos</p>
+        <div class="w-24 h-px bg-gold-400 mx-auto mb-6"></div>
+        <p class="text-lg md:text-xl text-white/90 font-light tracking-widest uppercase drop-shadow">2 de Mayo, 2026</p>
+        <p class="text-base md:text-lg text-white/80 font-light mt-4 drop-shadow">Nos casamos</p>
       </div>
     </section>
+
+    <!-- Gallery Section -->
+    <GaleriaSection />
 
     <!-- Countdown Section -->
     <CountdownSection />
@@ -106,19 +120,23 @@
     <!-- How to Get There Section (Horario + Localización) -->
     <ComoLlegarSection />
 
-    <!-- Wedding List Section -->
-    <ListaBodasSection />
-
     <!-- Survey Section -->
     <EncuestaSection />
+
+    <!-- Wedding List Section -->
+    <ListaBodasSection />
     
     <!-- Recommendations Section -->
     <RecomendacionesSection />
 
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-12 text-center border-t border-gray-800">
-      <p class="text-sm font-light tracking-wider uppercase">Con amor, Nora y David</p>
+    <footer class="bg-gradient-to-b from-gray-50 to-white border-t border-gray-200 py-16 text-center">
+      <div class="container mx-auto max-w-4xl px-4">
+        <div class="w-16 h-px bg-gold-400 mx-auto mb-6"></div>
+        <p class="text-sm font-light tracking-wider uppercase text-gray-600">Con amor, Nora y David</p>
+        <p class="text-xs font-light text-gray-400 mt-4">2 de Mayo, 2026</p>
+      </div>
     </footer>
   </div>
 </template>
@@ -130,16 +148,18 @@ import ComoLlegarSection from './components/ComoLlegarSection.vue'
 import ListaBodasSection from './components/ListaBodasSection.vue'
 import RecomendacionesSection from './components/RecomendacionesSection.vue'
 import EncuestaSection from './components/EncuestaSection.vue'
+import GaleriaSection from './components/GaleriaSection.vue'
 
 const logo = ref('/logo.jpeg')
 const menuOpen = ref(false)
 
 const sections = [
   { id: 'inicio', name: 'Inicio' },
-  { id: 'cuenta-atras', name: 'Cuenta atrás' },
+
+  { id: 'galeria', name: 'Galería' },
   { id: 'como-llegar', name: '¿Cómo llegar?' },
+  { id: 'encuesta', name: 'Confirmación' },
   { id: 'lista-bodas', name: 'Lista de bodas' },
-  { id: 'encuesta', name: 'Encuesta' },
   { id: 'recomendaciones', name: 'Recomendaciones' }
 ]
 
