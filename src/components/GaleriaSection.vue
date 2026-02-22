@@ -74,7 +74,6 @@ import { ref } from 'vue'
 const images = ref([
   '/1.jpeg',
   '/2.jpeg',
-  '/3.jpeg',
   '/5.jpeg',
   '/6.jpeg',
   '/7.jpeg',

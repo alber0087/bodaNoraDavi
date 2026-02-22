@@ -88,26 +88,32 @@
       </nav>
     </header>
 
-    <!-- Hero Section -->
-    <section id="inicio" class="relative text-center py-32 md:py-48 px-4 bg-gray-900 overflow-hidden">
-      <!-- Background Image with Overlay -->
-      <div class="absolute inset-0 z-0">
-        <img 
-          src="/1.jpeg" 
-          alt="Nora y David" 
-          class="w-full h-full object-cover opacity-40"
+    <!-- Hero Section (parallax background) -->
+    <section
+      id="inicio"
+      ref="heroSectionRef"
+      class="relative min-h-screen flex items-center justify-center text-center px-4 bg-gray-900 overflow-hidden"
+    >
+      <!-- Parallax background layer -->
+      <div
+        ref="heroBgRef"
+        class="absolute inset-0 z-0 w-full h-[120%] top-[-10%] will-change-transform"
+      >
+        <img
+          src="/3.jpeg"
+          alt="Nora y David"
+          class="absolute inset-0 w-full h-full object-cover opacity-40"
         />
         <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40"></div>
       </div>
-      
+
       <!-- Content -->
-      <div class="relative z-10 container mx-auto max-w-4xl">
+      <div class="relative z-10 container mx-auto max-w-4xl py-24">
         <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif font-normal mb-6 text-white tracking-tight drop-shadow-lg">
           Nora & David
         </h1>
         <div class="w-24 h-px bg-gold-400 mx-auto mb-6"></div>
         <p class="text-lg md:text-xl text-white/90 font-light tracking-widest uppercase drop-shadow">2 de Mayo, 2026</p>
-        <p class="text-base md:text-lg text-white/80 font-light mt-4 drop-shadow">Nos casamos</p>
       </div>
     </section>
 
@@ -142,7 +148,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import CountdownSection from './components/CountdownSection.vue'
 import ComoLlegarSection from './components/ComoLlegarSection.vue'
 import ListaBodasSection from './components/ListaBodasSection.vue'
@@ -152,10 +158,28 @@ import GaleriaSection from './components/GaleriaSection.vue'
 
 const logo = ref('/logo.jpeg')
 const menuOpen = ref(false)
+const heroSectionRef = ref(null)
+const heroBgRef = ref(null)
+
+const PARALLAX_SPEED = 0.35
+
+function updateParallax() {
+  if (!heroBgRef.value) return
+  const y = window.scrollY * PARALLAX_SPEED
+  heroBgRef.value.style.transform = `translate3d(0, ${y}px, 0)`
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', updateParallax, { passive: true })
+  updateParallax()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', updateParallax)
+})
 
 const sections = [
   { id: 'inicio', name: 'Inicio' },
-
   { id: 'galeria', name: 'Galería' },
   { id: 'como-llegar', name: '¿Cómo llegar?' },
   { id: 'encuesta', name: 'Confirmación' },
