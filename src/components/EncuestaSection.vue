@@ -6,11 +6,14 @@
       </h2>
       <div class="w-24 h-px bg-gold-400 mx-auto mb-16"></div>
 
+      <!-- Hidden iframe: form submits here so the user stays on the wedding site and only sees our thank-you message -->
+      <iframe name="encuestaFrame" title="Envío formulario" class="hidden absolute w-0 h-0 border-0" aria-hidden="true"></iframe>
+
       <form
         ref="formRef"
         method="post"
         :action="GOOGLE_FORM_URL"
-        target="_blank"
+        target="encuestaFrame"
         class="bg-white border border-gray-200 shadow-sm p-8 md:p-10 space-y-8"
         @submit.prevent="handleSubmit"
       >
