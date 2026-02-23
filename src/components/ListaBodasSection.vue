@@ -40,7 +40,7 @@
 import { ref } from 'vue'
 
 // Update this with your actual account number
-const accountNumber = ref('ES12 3456 7890 1234 5678 9012')
+const accountNumber = ref('ES12 0182 4958 1902 0169 0004')
 
 const copied = ref(false)
 
