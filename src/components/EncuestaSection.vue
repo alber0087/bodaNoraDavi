@@ -20,6 +20,7 @@
         <!-- Hidden fields sent to Google Form (entry.XXXXXXX format) -->
         <input type="hidden" :name="GOOGLE_FORM_FIELDS.name" :value="form.name" />
         <input type="hidden" :name="GOOGLE_FORM_FIELDS.attendance" :value="form.attendance === 'yes' ? 'Sí' : (form.attendance === 'no' ? 'No' : '')" />
+        <input type="hidden" :name="GOOGLE_FORM_FIELDS.meal_option" :value="mealOptionLabel" />
         <input type="hidden" :name="GOOGLE_FORM_FIELDS.allergies" :value="form.allergies || 'Ninguna'" />
         <input type="hidden" :name="GOOGLE_FORM_FIELDS.wants_slippers" :value="form.wantsSlippers === 'yes' ? 'Sí' : (form.wantsSlippers === 'no' ? 'No' : '')" />
         <!-- Only send shoe_size if user wants slippers and has selected a size -->
@@ -66,6 +67,45 @@
                 class="w-4 h-4 text-gold-600 focus:ring-gold-500 border-gray-300"
               />
               <span class="ml-2 text-gray-700 font-light">No</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Meal option: carne, pescado, vegano -->
+        <div>
+          <label class="block text-sm font-light text-gray-700 mb-3 tracking-wide uppercase">
+            Opción de menú <span class="text-red-400">*</span>
+          </label>
+          <div class="flex flex-wrap gap-6">
+            <label class="flex items-center cursor-pointer">
+              <input
+                v-model="form.mealOption"
+                type="radio"
+                value="carne"
+                required
+                class="w-4 h-4 text-gold-600 focus:ring-gold-500 border-gray-300"
+              />
+              <span class="ml-2 text-gray-700 font-light">Carne</span>
+            </label>
+            <label class="flex items-center cursor-pointer">
+              <input
+                v-model="form.mealOption"
+                type="radio"
+                value="pescado"
+                required
+                class="w-4 h-4 text-gold-600 focus:ring-gold-500 border-gray-300"
+              />
+              <span class="ml-2 text-gray-700 font-light">Pescado</span>
+            </label>
+            <label class="flex items-center cursor-pointer">
+              <input
+                v-model="form.mealOption"
+                type="radio"
+                value="vegano"
+                required
+                class="w-4 h-4 text-gold-600 focus:ring-gold-500 border-gray-300"
+              />
+              <span class="ml-2 text-gray-700 font-light">Vegano</span>
             </label>
           </div>
         </div>
@@ -177,18 +217,25 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const form = ref({
   name: '',
   attendance: '',
+  mealOption: '',
   allergies: '',
   wantsSlippers: '',
   shoeSize: '',
   goesToAlboroto: ''
 })
 
-const shoeSizes = ref([36, 37, 38, 39, 40, 41])
+// Human-readable label for meal option (sent to Google Form)
+const mealOptionLabel = computed(() => {
+  const labels = { carne: 'Carne', pescado: 'Pescado', vegano: 'Vegano' }
+  return form.value.mealOption ? labels[form.value.mealOption] : ''
+})
+
+const shoeSizes = ref([36, 37, 38, 39, 40, 41, 42, 43])
 
 const submitted = ref(false)
 const formRef = ref(null)
@@ -202,8 +249,9 @@ const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSe3MYN-8YtPGii
 // Estos valores vienen de las URLs de prellenado que obtuviste
 const GOOGLE_FORM_FIELDS = {
   name: 'entry.976262934',           // Campo 1: Nombre y Apellidos
-  attendance: 'entry.1161261606',      // Campo 2: Asistencia
-  allergies: 'entry.820820323',       // Campo 3: Alergias
+  attendance: 'entry.1161261606',    // Campo 2: Asistencia
+  meal_option: 'entry.1788862281',   // Opción de menú (Carne/Pescado/Vegano)
+  allergies: 'entry.820820323',      // Campo 3: Alergias
   wants_slippers: 'entry.312107365',  // Campo 4: ¿Quiere zapatillas?
   shoe_size: 'entry.1690728712',      // Campo 5: Talla de zapatilla
   goes_to_alboroto: 'entry.933654178' // Campo 6: ¿Va al Alboroto?
@@ -222,7 +270,7 @@ function handleSubmit() {
   // Reset form and message after a moment (if no navigation happened)
   setTimeout(() => {
     submitted.value = false
-    form.value = { name: '', attendance: '', allergies: '', wantsSlippers: '', shoeSize: '', goesToAlboroto: '' }
+    form.value = { name: '', attendance: '', mealOption: '', allergies: '', wantsSlippers: '', shoeSize: '', goesToAlboroto: '' }
   }, 4000)
 }
 </script>
